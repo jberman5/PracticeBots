@@ -1,0 +1,61 @@
+console.log('The bot is loading');
+
+var Twit = require('twit');
+var config = require('./config');
+//console.log(config);
+var T = new Twit(config);
+var r = Math.random()*100;
+
+// Get tweet based on search parameters
+var params = {
+   q: 'millenials are killing',
+   count: 5 };
+
+T.get('search/tweets', params, function(err, data, response) {
+  var tweets = data.statuses;
+  for(var i = 0; i < tweets.length; i++){
+  console.log(tweets[i].text);
+}
+});
+
+// Post tweet at specified interval
+//SetInterval(newTweet, 1000*20)
+
+function newTweet(txt){
+  var tweet = {
+    status: txt
+  }
+
+  T.post('statuses/update', tweet, tweeted);
+
+  function tweeted(err, data, response) {
+    console.log("You good, moe")
+  };
+};
+
+// User stream
+var stream = T.stream('user');
+
+//On new follower
+stream.on('follow', followed);
+
+function followed(eventMsg) {
+  console.log("New follower");
+  var name = eventMsg.source.name;
+  var screenName = eventMsg.source.screen_name;
+  newTweet('@' + screenName + ' bet.');
+}
+
+// Public stream
+
+var stream = T.stream('statuses/filter', { track: 'millenials'})
+
+stream.on('tweet', findNew);
+
+function findNew(tweet){
+//  var foundTweet = data.statuses;
+  //for(var i = 0; i < 6; i++){
+  console.log(tweet.text);
+//  };
+//  console.log(tweet.text);
+};
