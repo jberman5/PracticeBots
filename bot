@@ -18,6 +18,19 @@ T.get('search/tweets', params, function(err, data, response) {
 }
 });
 
+var paramsFav = {
+   count: 5 };
+
+T.get('favorites/list', paramsFav, function(err, data, response) {
+  var tweets = data;
+  for(var i = 0; i < tweets.length; i++){
+//if (data[i].entities.urls.hasOwnProperty('url') == true) {
+if (true) {
+  console.log(data[i].entities.urls[0].url);
+}
+
+ }
+});
 // Post tweet at specified interval
 //SetInterval(newTweet, 1000*20)
 
@@ -59,3 +72,37 @@ function findNew(tweet){
 //  };
 //  console.log(tweet.text);
 };
+
+// ******Delete the tweets******
+
+// 1. Grab id from a tweet(s) you posted
+var tweetIds = [];
+function grabTweet() {
+  var grabParams = {
+   screen_name: 'notanewtest',
+   count: 5 };
+  T.get('statuses/user_timeline', grabParams, function(err, data, response) {
+  console.log(data.length);
+    for(var j = 0; j < data.length; j++){
+      // console.log(data[j].id_str);
+      tweetIds.push(data[j].id_str);
+      //console.log('Here is a list of tweets to delete ' + tweetIDs + ' .');
+    }
+  deleteTweets(tweetIds);
+  console.log(tweetIds);
+  });
+};
+// 2. Delete the slected tweets
+function deleteTweets(ids) {
+
+var delParams = {
+  id: tweetIds[0]
+};
+
+  T.post('statuses/destroy', delParams, function(err, data, response) {
+    console.log("Tweet deleted!");
+    console.log(tweetIds);
+  });
+};
+
+deleteTweets();
